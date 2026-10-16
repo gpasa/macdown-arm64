@@ -122,6 +122,7 @@ NS_INLINE NSString *MPPrismDefaultThemeName(void)
         self.preferences.htmlHighlightingThemeName = @"";
     else
         self.preferences.htmlHighlightingThemeName = title;
+    [self showPreviewForStyleName:self.preferences.htmlStyleName];
 }
 
 - (IBAction)invokeStylesheetFunction:(NSSegmentedControl *)sender
@@ -255,11 +256,27 @@ NS_INLINE NSString *MPPrismDefaultThemeName(void)
         [head appendFormat:@"<style>%@</style><script>%@</script>",
             read(css), read(js)];
     }
+    // Le code de l'exemple est colorisé avec le thème choisi, comme dans
+    // l'aperçu du document.
+    NSMutableString *tail = [NSMutableString string];
+    if (self.preferences.htmlSyntaxHighlighting)
+    {
+        NSURL *theme = MPHighlightingThemeURLForName(
+            self.preferences.htmlHighlightingThemeName);
+        [head appendFormat:@"<style>%@</style>", read(theme)];
+        for (NSString *name in @[@"prism-core.min", @"prism-clike.min",
+                                 @"prism-swift.min"])
+        {
+            NSURL *js = [bundle URLForResource:name withExtension:@"js"
+                                  subdirectory:@"Prism/components"];
+            [tail appendFormat:@"<script>%@</script>", read(js)];
+        }
+    }
     NSURL *sample = [bundle URLForResource:@"style-preview" withExtension:@"html"
                               subdirectory:@"Data"];
     NSString *html = [NSString stringWithFormat:
         @"<!DOCTYPE html><html><head><meta charset=\"utf-8\">%@</head>"
-        @"<body>%@</body></html>", head, read(sample)];
+        @"<body>%@%@</body></html>", head, read(sample), tail];
     [self.stylePreview loadHTMLString:html baseURL:nil];
 }
 

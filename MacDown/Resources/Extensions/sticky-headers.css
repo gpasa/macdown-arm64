@@ -8,7 +8,9 @@ html.mpd-sticky h2 {
   margin-left: calc(-1 * var(--mpd-pad-left, 0px));
   margin-right: calc(-1 * var(--mpd-pad-right, 0px));
   padding-left: var(--mpd-pad-left, 0px);
-  padding-right: var(--mpd-pad-right, 0px); }
+  padding-right: var(--mpd-pad-right, 0px);
+  padding-top: 0.25em;
+  padding-bottom: 0.25em; }
 html.mpd-sticky:not(.mpd-measuring) h1,
 html.mpd-sticky:not(.mpd-measuring) h2 {
   position: -webkit-sticky;
