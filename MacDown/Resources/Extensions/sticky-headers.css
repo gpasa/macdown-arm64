@@ -1,0 +1,43 @@
+/* Titres h1/h2 et en-têtes de tableau collants pendant le défilement.
+   Actif seulement sous html.mpd-sticky (posé par sticky-headers.js) ;
+   html.mpd-measuring le suspend le temps que l'application mesure la
+   position naturelle des titres pour synchroniser le défilement. */
+html.mpd-sticky h1,
+html.mpd-sticky h2 {
+  background-color: var(--mpd-sticky-bg, white);
+  margin-left: calc(-1 * var(--mpd-pad-left, 0px));
+  margin-right: calc(-1 * var(--mpd-pad-right, 0px));
+  padding-left: var(--mpd-pad-left, 0px);
+  padding-right: var(--mpd-pad-right, 0px); }
+html.mpd-sticky:not(.mpd-measuring) h1,
+html.mpd-sticky:not(.mpd-measuring) h2 {
+  position: -webkit-sticky;
+  position: sticky; }
+html.mpd-sticky h1 {
+  top: 0;
+  z-index: 3; }
+html.mpd-sticky h2 {
+  top: var(--mpd-h1-height, 0px);
+  z-index: 2; }
+html.mpd-sticky h1, html.mpd-sticky h2, html.mpd-sticky h3,
+html.mpd-sticky h4, html.mpd-sticky h5, html.mpd-sticky h6 {
+  scroll-margin-top: calc(var(--mpd-h1-height, 0px) + var(--mpd-h2-height, 0px) + 8px); }
+
+/* Un tableau qui défile lui-même empêcherait son en-tête de coller. */
+html.mpd-sticky table {
+  display: table;
+  overflow: visible; }
+html.mpd-sticky:not(.mpd-measuring) thead th {
+  position: -webkit-sticky;
+  position: sticky;
+  top: calc(var(--mpd-h1-height, 0px) + var(--mpd-h2-height, 0px));
+  z-index: 1; }
+/* Spécificité nulle pour html : le fond d'en-tête du style l'emporte. */
+:where(html.mpd-sticky) thead th {
+  background-color: var(--mpd-sticky-bg, white);
+  box-shadow: inset 0 -1px 0 rgba(128, 128, 128, 0.45); }
+
+@media print {
+  html.mpd-sticky h1, html.mpd-sticky h2, html.mpd-sticky thead th {
+    position: static !important; }
+}

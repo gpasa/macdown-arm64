@@ -8,6 +8,10 @@
 
 #import <WebKit/WebKit.h>
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#pragma clang diagnostic ignored "-Wdeprecated-implementations"
+
 struct DOMNodeTextCount
 {
     NSUInteger words;
@@ -23,3 +27,5 @@ typedef struct DOMNodeTextCount DOMNodeTextCount;
 @property (readonly, nonatomic) DOMNodeTextCount textCount;
 
 @end
+
+#pragma clang diagnostic pop

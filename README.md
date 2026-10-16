@@ -49,7 +49,7 @@ The following editor themes and CSS files are extracted from [Mou](http://mouapp
 
 If you wish to build MacDown yourself, you will need the following components/tools:
 
-* OS X SDK (10.14 or later)
+* macOS 26 SDK (Xcode 26 or later)
 * Git
 * [Bundler](http://bundler.io)
 
@@ -60,8 +60,6 @@ If you wish to build MacDown yourself, you will need the following components/to
 >     xcode-select --install
 >
 > and report back.
-
-An appropriate SDK should be bundled with Xcode 5 or later versions.
 
 ### Environment Setup
 

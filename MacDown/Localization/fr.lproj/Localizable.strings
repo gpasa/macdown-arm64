@@ -140,3 +140,6 @@
 /* (No Comment) */
 "WORDS_PLURAL_STRING" = "%@ mot;%@ mots";
 
+
+/* Preference checkbox */
+"Sticky headings and table headers" = "Titres et en-têtes de tableau collants";

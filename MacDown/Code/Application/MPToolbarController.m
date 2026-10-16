@@ -113,12 +113,14 @@ static CGFloat itemWidth = 37;
     NSToolbarItemGroup *selectedGroup = self->toolbarItemIdentifierObjectDictionary[sender.identifier];
     NSToolbarItem *selectedItem = selectedGroup.subitems[selectedIndex];
     
-    // Invoke the toolbar item's action
-    // Must convert to IMP to let the compiler know about the method definition
+    // Invoke the toolbar item's action. performSelector: is required because
+    // these selectors live on MPDocument, not this controller. The old IMP
+    // cast omitted SEL and crashed on arm64.
     MPDocument *document = self.document;
-    IMP imp = [document methodForSelector:selectedItem.action];
-    void (*impFunc)(id) = (void *)imp;
-    impFunc(document);
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+    [document performSelector:selectedItem.action withObject:sender];
+#pragma clang diagnostic pop
 }
 
 
@@ -198,8 +200,6 @@ static CGFloat itemWidth = 37;
     itemGroup.label = label;
     itemGroup.paletteLabel = label;
     
-    CGFloat itemGroupWidth = itemWidth * items.count;
-    
     NSSegmentedControl *segmentedControl = [[NSSegmentedControl alloc] init];
     segmentedControl.identifier = itemIdentifier;
     segmentedControl.segmentStyle = separated ? NSSegmentStyleSeparated : NSSegmentStyleTexturedRounded;
@@ -222,7 +222,6 @@ static CGFloat itemWidth = 37;
         segmentIndex++;
     }
     
-    itemGroup.maxSize = NSMakeSize(itemGroupWidth, 25);
     itemGroup.view = segmentedControl;
     
     [self->toolbarItemIdentifierObjectDictionary setObject:itemGroup forKey:itemIdentifier];

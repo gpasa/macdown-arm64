@@ -8,7 +8,9 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="MPHtmlPreferencesViewController">
             <connections>
+                <outlet property="defaultPathLabel" destination="f62-wu-Z6p" id="mpd-Pl-001"/>
                 <outlet property="highlightingThemeSelect" destination="2I4-c8-jan" id="mJf-rt-Jfr"/>
+                <outlet property="scaleCheckbox" destination="RCL-iK-kgx" id="mpd-Sc-002"/>
                 <outlet property="stylesheetFunctions" destination="IJe-cc-YKn" id="8M2-zc-OfV"/>
                 <outlet property="stylesheetSelect" destination="Wgm-Sy-7mr" id="Yis-7d-dn6"/>
                 <outlet property="view" destination="Hz6-mo-xeY" id="0bl-1N-x8E"/>
@@ -249,7 +251,12 @@
                 <constraint firstItem="ysT-Br-eSf" firstAttribute="trailing" secondItem="Zna-RM-nBO" secondAttribute="trailing" id="2Dv-QD-tU1"/>
                 <constraint firstItem="vVI-g8-EhH" firstAttribute="trailing" secondItem="Dd4-T9-cLi" secondAttribute="trailing" id="3CP-t8-TSZ"/>
                 <constraint firstItem="vVI-g8-EhH" firstAttribute="leading" secondItem="Zna-RM-nBO" secondAttribute="leading" id="3e9-8I-C7O"/>
-                <constraint firstItem="5mI-gS-xH9" firstAttribute="top" secondItem="ysT-Br-eSf" secondAttribute="bottom" constant="11" id="4eS-8i-EmI"/>
+                <constraint firstItem="5mI-gS-xH9" firstAttribute="top" secondItem="Qe1-sK-Yxe" secondAttribute="bottom" constant="11" id="4eS-8i-EmI"/>
+                <constraint firstItem="Qe1-sK-Yxe" firstAttribute="top" secondItem="ysT-Br-eSf" secondAttribute="bottom" constant="6" id="mpd-Gv-004"/>
+                <constraint firstItem="Qe1-sK-Yxe" firstAttribute="leading" secondItem="ysT-Br-eSf" secondAttribute="leading" id="mpd-Gv-005"/>
+                <constraint firstItem="bWg-uC-6W8" firstAttribute="centerY" secondItem="Qe1-sK-Yxe" secondAttribute="centerY" id="mpd-Mm-006"/>
+                <constraint firstItem="bWg-uC-6W8" firstAttribute="leading" secondItem="Qe1-sK-Yxe" secondAttribute="trailing" constant="12" id="mpd-Mm-007"/>
+                <constraint firstItem="Zna-RM-nBO" firstAttribute="top" secondItem="Wgm-Sy-7mr" secondAttribute="bottom" constant="10" id="mpd-Zt-003"/>
                 <constraint firstItem="2I4-c8-jan" firstAttribute="leading" secondItem="M0W-YD-Ouk" secondAttribute="leading" id="8Mw-X4-Li9"/>
                 <constraint firstItem="u5h-MS-cR3" firstAttribute="trailing" secondItem="5mI-gS-xH9" secondAttribute="trailing" id="9cD-Rw-29O"/>
                 <constraint firstAttribute="trailing" secondItem="bih-Hu-dSj" secondAttribute="trailing" constant="20" id="9gU-rZ-Jh2"/>

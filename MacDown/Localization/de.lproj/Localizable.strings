@@ -140,3 +140,6 @@
 /* (No Comment) */
 "WORDS_PLURAL_STRING" = "%@ Wort;%@ Wörter";
 
+
+/* Preference checkbox */
+"Sticky headings and table headers" = "Fixierte Überschriften und Tabellenköpfe";

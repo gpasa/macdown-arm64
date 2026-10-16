@@ -8,6 +8,10 @@
 
 #import "DOMNode+Text.h"
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#pragma clang diagnostic ignored "-Wdeprecated-implementations"
+
 typedef NS_ENUM(NSUInteger, DOMNodeTextCountingOption)
 {
     DOMNodeTextCountWords,
@@ -131,3 +135,5 @@ NS_INLINE NSUInteger MPGetNodeTextCount(
 }
 
 @end
+
+#pragma clang diagnostic pop

@@ -222,6 +222,7 @@ NS_INLINE BOOL MPAreNilableStringsEqual(NSString *s1, NSString *s2)
 @property BOOL syntaxHighlighting;
 @property BOOL mermaid;
 @property BOOL graphviz;
+@property BOOL stickyHeaders;
 @property MPCodeBlockAccessoryType codeBlockAccesory;
 @property BOOL lineNumbers;
 @property BOOL manualRender;
@@ -321,7 +322,7 @@ NS_INLINE hoedown_renderer *MPCreateHTMLRenderer(MPRenderer *renderer)
     return htmlRenderer;
 }
 
-NS_INLINE hoedown_renderer *MPCreateHTMLTOCRenderer()
+NS_INLINE hoedown_renderer *MPCreateHTMLTOCRenderer(void)
 {
     hoedown_renderer *tocRenderer =
         hoedown_html_toc_renderer_new(kMPRendererTOCLevel);
@@ -499,6 +500,11 @@ NS_INLINE void MPFreeHTMLRenderer(hoedown_renderer *htmlRenderer)
         NSURL *url = MPExtensionURL(@"show-information", @"css");
         [stylesheets addObject:[MPStyleSheet CSSWithURL:url]];
     }
+    if ([delegate rendererHasStickyHeaders:self])
+    {
+        NSURL *url = MPExtensionURL(@"sticky-headers", @"css");
+        [stylesheets addObject:[MPStyleSheet CSSWithURL:url]];
+    }
     return stylesheets;
 }
 
@@ -527,6 +533,11 @@ NS_INLINE void MPFreeHTMLRenderer(hoedown_renderer *htmlRenderer)
     }
     if ([d rendererHasMathJax:self])
         [scripts addObjectsFromArray:self.mathjaxScripts];
+    if ([d rendererHasStickyHeaders:self])
+    {
+        NSURL *url = MPExtensionURL(@"sticky-headers", @"js");
+        [scripts addObject:[MPScript javaScriptWithURL:url]];
+    }
     return scripts;
 }
 
@@ -626,6 +637,8 @@ NS_INLINE void MPFreeHTMLRenderer(hoedown_renderer *htmlRenderer)
         changed = YES;
     else if ([d rendererHasGraphviz:self] != self.graphviz)
         changed = YES;
+    else if ([d rendererHasStickyHeaders:self] != self.stickyHeaders)
+        changed = YES;
     else if (!MPAreNilableStringsEqual(
             [d rendererHighlightingThemeName:self], self.highlightingThemeName))
         changed = YES;
@@ -644,8 +657,10 @@ NS_INLINE void MPFreeHTMLRenderer(hoedown_renderer *htmlRenderer)
     id<MPRendererDelegate> delegate = self.delegate;
 
     NSString *title = [self.dataSource rendererHTMLTitle:self];
+    // Feuilles intégrées : l'aperçu WKWebView ne peut lire que le dossier du
+    // document et l'app, pas les styles de ~/Library/Application Support.
     NSString *html = MPGetHTML(
-        title, self.currentHtml, self.stylesheets, MPAssetFullLink,
+        title, self.currentHtml, self.stylesheets, MPAssetEmbedded,
         self.scripts, MPAssetFullLink);
     [delegate renderer:self didProduceHTMLOutput:html];
 
@@ -653,6 +668,7 @@ NS_INLINE void MPFreeHTMLRenderer(hoedown_renderer *htmlRenderer)
     self.syntaxHighlighting = [delegate rendererHasSyntaxHighlighting:self];
     self.mermaid = [delegate rendererHasMermaid:self];
     self.graphviz = [delegate rendererHasGraphviz:self];
+    self.stickyHeaders = [delegate rendererHasStickyHeaders:self];
     self.highlightingThemeName = [delegate rendererHighlightingThemeName:self];
     self.codeBlockAccesory = [delegate rendererCodeBlockAccesory:self];
 }

@@ -72,6 +72,7 @@ extern NSString * const MPDidDetectFreshInstallationNotification;
 @property (assign) NSInteger htmlCodeBlockAccessory;
 @property (assign) NSURL *htmlDefaultDirectoryUrl;
 @property (assign) BOOL htmlRendersTOC;
+@property (assign) BOOL htmlStickyHeaders;
 
 // Calculated values.
 @property (readonly) NSString *editorBaseFontName;

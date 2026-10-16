@@ -17,7 +17,7 @@ NSString * const kMPThemeFileExtension = @"style";
 NSString * const kMPPlugInsDirectoryName = @"PlugIns";
 NSString * const kMPPlugInFileExtension = @"plugin";
 
-static NSString *MPDataRootDirectory()
+static NSString *MPDataRootDirectory(void)
 {
     static NSString *path = nil;
     if (!path)
@@ -160,7 +160,27 @@ NSDictionary *MPGetDataMap(NSString *name)
     NSBundle *bundle = [NSBundle mainBundle];
     NSString *filePath = [bundle pathForResource:name ofType:@"map"
                                      inDirectory:@"Data"];
-    return [NSKeyedUnarchiver unarchiveObjectWithFile:filePath];
+    if (!filePath)
+        return nil;
+    NSData *data = [NSData dataWithContentsOfFile:filePath];
+    if (!data)
+        return nil;
+
+    NSError *error = nil;
+    NSSet *classes = [NSSet setWithObjects:
+                      [NSDictionary class],
+                      [NSArray class],
+                      [NSString class],
+                      [NSNumber class],
+                      [NSData class],
+                      [NSDate class],
+                      nil];
+    id object = [NSKeyedUnarchiver unarchivedObjectOfClasses:classes
+                                                    fromData:data
+                                                       error:&error];
+    if (![object isKindOfClass:[NSDictionary class]])
+        return nil;
+    return object;
 }
 
 id MPGetObjectFromJavaScript(NSString *code, NSString *variableName)

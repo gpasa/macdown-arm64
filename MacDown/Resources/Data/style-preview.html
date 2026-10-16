@@ -1,0 +1,38 @@
+<h1>Aperçu du style</h1>
+<p>Un paragraphe avec du texte en <strong>gras</strong>, en <em>italique</em>, un <a href="#">lien</a> et du <code>code</code> en ligne. La mise en forme suit la feuille de style choisie.</p>
+<h2>Listes et citation</h2>
+<ul>
+<li>Premier point</li>
+<li>Deuxième point, un peu plus long pour voir le retour à la ligne</li>
+</ul>
+<ol>
+<li>Étape une</li>
+<li>Étape deux</li>
+</ol>
+<blockquote>
+<p>Une citation mise en retrait.</p>
+</blockquote>
+<h2>Tableau</h2>
+<table>
+<thead>
+<tr><th>Article</th><th style="text-align: right">Quantité</th><th style="text-align: right">Prix (CHF)</th><th style="text-align: center">Stock</th></tr>
+</thead>
+<tbody>
+<tr><td>Cahier</td><td style="text-align: right">3</td><td style="text-align: right">4.50</td><td style="text-align: center">oui</td></tr>
+<tr><td>Stylo</td><td style="text-align: right">12</td><td style="text-align: right">1.20</td><td style="text-align: center">oui</td></tr>
+<tr><td>Classeur</td><td style="text-align: right">2</td><td style="text-align: right">7.90</td><td style="text-align: center">non</td></tr>
+<tr><td>Agrafeuse</td><td style="text-align: right">1</td><td style="text-align: right">15.00</td><td style="text-align: center">oui</td></tr>
+<tr><td>Ciseaux</td><td style="text-align: right">4</td><td style="text-align: right">6.30</td><td style="text-align: center">oui</td></tr>
+<tr><td>Règle</td><td style="text-align: right">6</td><td style="text-align: right">2.10</td><td style="text-align: center">non</td></tr>
+<tr><td>Gomme</td><td style="text-align: right">10</td><td style="text-align: right">0.80</td><td style="text-align: center">oui</td></tr>
+<tr><td>Surligneur</td><td style="text-align: right">5</td><td style="text-align: right">1.90</td><td style="text-align: center">oui</td></tr>
+</tbody>
+</table>
+<h2>Code</h2>
+<pre><code>func total(_ lignes: [Ligne]) -&gt; Double {
+    lignes.reduce(0) { $0 + $1.prix * Double($1.quantite) }
+}</code></pre>
+<h3>Sous-section</h3>
+<p>Un dernier paragraphe pour qu’on puisse faire défiler l’aperçu et voir les en-têtes rester en place lorsque l’option est cochée.</p>
+<hr>
+<p>Fin de l’aperçu.</p>

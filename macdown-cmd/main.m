@@ -14,10 +14,7 @@
 #import "MPArgumentProcessor.h"
 
 
-const NSUInteger kMPPathEncoding = NSUTF8StringEncoding;
-
-
-NSRunningApplication *MPRunningMacDownInstance()
+NSRunningApplication *MPRunningMacDownInstance(void)
 {
     NSArray *runningInstances = [NSRunningApplication
         runningApplicationsWithBundleIdentifier:kMPApplicationSuiteName];
@@ -50,7 +47,7 @@ void MPCollectForMacDown(NSOrderedSet<NSURL *> *urls)
  * 
  * @return Piped data if any, otherwise nil.
  */
-NSData* MPPipedData() {
+NSData *MPPipedData(void) {
     NSFileHandle *stdInFileHandle = [NSFileHandle fileHandleWithStandardInput];
     // Check if stdin file handle have anything to read
     // Modified solution from http://stackoverflow.com/questions/7505777/how-do-i-check-for-nsfilehandle-has-data-available
@@ -104,17 +101,27 @@ int main(int argc, const char * argv[])
         NSString *pwd = [NSFileManager defaultManager].currentDirectoryPath;
         NSURL *pwdUrl = [NSURL fileURLWithPath:pwd isDirectory:YES];
         NSMutableOrderedSet<NSURL *> *urls = [NSMutableOrderedSet orderedSet];
+        NSCharacterSet *urlChars = [NSCharacterSet URLPathAllowedCharacterSet];
         for (NSString *arg in argproc.arguments)
         {
             NSString *escaped =
-                [arg stringByAddingPercentEscapesUsingEncoding:kMPPathEncoding];
+                [arg stringByAddingPercentEncodingWithAllowedCharacters:urlChars];
             NSURL *url = [NSURL URLWithString:escaped relativeToURL:pwdUrl];
-            [urls addObject:url];
+            if (url)
+                [urls addObject:url];
         }
         MPCollectForMacDown(urls);
 
         // Launch MacDown.
-        [[NSWorkspace sharedWorkspace] launchAppWithBundleIdentifier:kMPApplicationBundleIdentifier options:NSWorkspaceLaunchDefault additionalEventParamDescriptor:nil launchIdentifier:nil];
+        NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
+        NSURL *appURL =
+            [workspace URLForApplicationWithBundleIdentifier:kMPApplicationBundleIdentifier];
+        if (appURL)
+        {
+            [workspace openApplicationAtURL:appURL
+                              configuration:[NSWorkspaceOpenConfiguration configuration]
+                          completionHandler:nil];
+        }
     }
     return EXIT_SUCCESS;
 }

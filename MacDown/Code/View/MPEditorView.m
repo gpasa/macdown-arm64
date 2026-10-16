@@ -40,7 +40,7 @@ NS_INLINE BOOL MPAreRectsEqual(NSRect r1, NSRect r2)
 }
 
 - (void)awakeFromNib {
-    [self registerForDraggedTypes:[NSArray arrayWithObjects: NSDragPboard, nil]];
+    [self registerForDraggedTypes:@[NSPasteboardTypeFileURL]];
     [super awakeFromNib];
 }
 
@@ -69,17 +69,21 @@ NS_INLINE BOOL MPAreRectsEqual(NSRect r1, NSRect r2)
     sourceDragMask = [sender draggingSourceOperationMask];
     pboard = [sender draggingPasteboard];
     
-    if ( [[pboard types] containsObject:NSFilenamesPboardType] ) {
-        NSArray *files = [pboard propertyListForType:NSFilenamesPboardType];
-        
-        /* Load data of file. */
-        NSError *error;
-        NSData *fileData = [NSData dataWithContentsOfFile: files[0]
-                                                  options: NSMappedRead
-                                                    error: &error];
-        if (!error) {
-            // convert to base64 representation
-            NSString *dataString = [fileData base64Encoding];
+    NSURL *fileURL = nil;
+    NSArray<NSURL *> *urls =
+        [pboard readObjectsForClasses:@[[NSURL class]]
+                              options:@{NSPasteboardURLReadingFileURLsOnlyKey: @YES}];
+    if (urls.count)
+        fileURL = urls.firstObject;
+
+    if (fileURL) {
+        NSError *error = nil;
+        NSData *fileData = [NSData dataWithContentsOfURL:fileURL
+                                                 options:NSDataReadingMappedIfSafe
+                                                   error:&error];
+        if (fileData) {
+            NSString *dataString =
+                [fileData base64EncodedStringWithOptions:0];
             
             // insert into text.
             NSInteger insertionPoint = [[[self selectedRanges] objectAtIndex:0] rangeValue].location;

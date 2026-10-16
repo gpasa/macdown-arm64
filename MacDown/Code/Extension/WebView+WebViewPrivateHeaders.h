@@ -8,6 +8,10 @@
 
 #import <WebKit/WebKit.h>
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#pragma clang diagnostic ignored "-Wdeprecated-implementations"
+
 @interface WebView (WebViewPrivateHeaders)
 
 /*!
@@ -24,3 +28,5 @@
 - (float)pageSizeMultiplier;
 
 @end
+
+#pragma clang diagnostic pop

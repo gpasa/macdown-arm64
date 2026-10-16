@@ -8,7 +8,7 @@
 
 #import "MPMainController.h"
 #import <MASPreferences/MASPreferencesWindowController.h>
-#import <Sparkle/SUUpdater.h>
+#import <Sparkle/Sparkle.h>
 #import "MPGlobals.h"
 #import "MPUtilities.h"
 #import "NSDocumentController+Document.h"
@@ -23,6 +23,20 @@
 
 
 static NSString * const kMPTreatLastSeenStampKey = @"treatLastSeenStamp";
+
+
+NS_INLINE BOOL MPIsConfiguredInfoString(NSString *value)
+{
+    if (![value isKindOfClass:[NSString class]])
+        return NO;
+
+    NSString *trimmed =
+        [value stringByTrimmingCharactersInSet:
+         [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    return trimmed.length
+        && ![trimmed hasPrefix:@"$("]
+        && ![trimmed isEqualToString:@"\"\""];
+}
 
 
 NS_INLINE void MPOpenBundledFile(NSString *resource, NSString *extension)
@@ -50,7 +64,7 @@ NS_INLINE void MPOpenBundledFile(NSString *resource, NSString *extension)
      }];
 }
 
-NS_INLINE void treat()
+NS_INLINE void treat(void)
 {
     NSDictionary *info = MPGetDataMap(@"treats");
     NSString *name = info[@"name"];
@@ -91,8 +105,9 @@ NS_INLINE void treat()
 }
 
 
-@interface MPMainController ()
+@interface MPMainController () <NSMenuItemValidation, SPUUpdaterDelegate>
 @property (readonly) NSWindowController *preferencesWindowController;
+@property (strong) SPUStandardUpdaterController *updaterController;
 @end
 
 
@@ -121,6 +136,12 @@ NS_INLINE void treat()
         setEventHandler:self
             andSelector:@selector(openUrlSchemeAppleEvent:withReplyEvent:)
           forEventClass:kInternetEventClass andEventID:kAEGetURL];
+
+    if ([self hasSparkleConfiguration])
+        self.updaterController =
+            [[SPUStandardUpdaterController alloc]
+             initWithStartingUpdater:YES updaterDelegate:self
+             userDriverDelegate:nil];
 }
 
 // Open a file from a browser with url of the form :
@@ -189,6 +210,37 @@ NS_INLINE void treat()
     return [MPPreferences sharedInstance];
 }
 
+// Tous les panneaux prennent la taille du plus grand, contenu centré en
+// haut : la fenêtre des préférences ne change plus de taille d'un panneau
+// à l'autre.
+static void MPGiveViewControllersEqualSize(NSArray<NSViewController *> *vcs)
+{
+    NSSize size = NSZeroSize;
+    for (NSViewController *vc in vcs)
+    {
+        NSSize s = vc.view.frame.size;
+        size.width = MAX(size.width, s.width);
+        size.height = MAX(size.height, s.height);
+    }
+    for (NSViewController *vc in vcs)
+    {
+        NSView *content = vc.view;
+        NSSize s = content.frame.size;
+        NSView *container =
+            [[NSView alloc] initWithFrame:NSMakeRect(0, 0, size.width, size.height)];
+        content.translatesAutoresizingMaskIntoConstraints = YES;
+        content.autoresizingMask = NSViewNotSizable;
+        content.frame = NSMakeRect(floor((size.width - s.width) / 2),
+                                   size.height - s.height, s.width, s.height);
+        vc.view = container;
+        [container addSubview:content];
+        // Sans cela, panneau → contrôleur → conteneur → contrôleur… :
+        // WebKit tourne en rond en cherchant l'undoManager.
+        content.nextResponder = container;
+        vc.nextResponder = nil;
+    }
+}
+
 - (NSWindowController *)preferencesWindowController
 {
     if (!_preferencesWindowController)
@@ -200,6 +252,7 @@ NS_INLINE void treat()
             [[MPHtmlPreferencesViewController alloc] init],
             [[MPTerminalPreferencesViewController alloc] init],
         ];
+        MPGiveViewControllersEqualSize(vcs);
         NSString *title = NSLocalizedString(@"Preferences",
                                             @"Preferences window title.");
 
@@ -213,6 +266,11 @@ NS_INLINE void treat()
 - (IBAction)showPreferencesWindow:(id)sender
 {
     [self.preferencesWindowController showWindow:nil];
+}
+
+- (IBAction)checkForUpdates:(id)sender
+{
+    [self.updaterController checkForUpdates:sender];
 }
 
 - (IBAction)showHelp:(id)sender
@@ -252,6 +310,18 @@ NS_INLINE void treat()
     return !self.preferences.supressesUntitledDocumentOnLaunch;
 }
 
+- (BOOL)applicationSupportsSecureRestorableState:(NSApplication *)app
+{
+    return YES;
+}
+
+- (BOOL)validateMenuItem:(NSMenuItem *)menuItem
+{
+    if (menuItem.action == @selector(checkForUpdates:))
+        return self.updaterController.updater.canCheckForUpdates;
+    return YES;
+}
+
 - (void)applicationDidBecomeActive:(NSNotification *)notification
 {
     [self openPendingPipedContent];
@@ -260,17 +330,29 @@ NS_INLINE void treat()
 }
 
 
-#pragma mark - SUUpdaterDelegate
+#pragma mark - SPUUpdaterDelegate
 
-- (NSString *)feedURLStringForUpdater:(SUUpdater *)updater
+- (NSString *)feedURLStringForUpdater:(SPUUpdater *)updater
 {
-    if (self.preferences.updateIncludesPreReleases)
-        return [NSBundle mainBundle].infoDictionary[@"SUBetaFeedURL"];
-    return [NSBundle mainBundle].infoDictionary[@"SUFeedURL"];
+    NSDictionary *info = [NSBundle mainBundle].infoDictionary;
+    NSString *stableFeed = info[@"SUFeedURL"];
+    NSString *betaFeed = info[@"SUBetaFeedURL"];
+
+    if (self.preferences.updateIncludesPreReleases
+        && MPIsConfiguredInfoString(betaFeed))
+        return betaFeed;
+    return MPIsConfiguredInfoString(stableFeed) ? stableFeed : nil;
 }
 
 
 #pragma mark - Private
+
+- (BOOL)hasSparkleConfiguration
+{
+    NSDictionary *info = [NSBundle mainBundle].infoDictionary;
+    return MPIsConfiguredInfoString(info[@"SUPublicEDKey"])
+        && MPIsConfiguredInfoString(info[@"SUFeedURL"]);
+}
 
 - (void)copyFiles
 {

@@ -110,3 +110,6 @@
 /* (No Comment) */
 "WORDS_PLURAL_STRING" = "%@ parola;%@ parole";
 
+
+/* Preference checkbox */
+"Sticky headings and table headers" = "Titoli e intestazioni di tabella fissi";

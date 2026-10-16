@@ -15,7 +15,7 @@ NSString * const MPDidRequestEditorSetupNotificationKeyName =
     @"MPDidRequestEditorSetupNotificationKeyNameKey";
 
 
-@interface MPEditorPreferencesViewController () <NSTextFieldDelegate>
+@interface MPEditorPreferencesViewController () <NSTextFieldDelegate, NSFontChanging>
 @property (weak) IBOutlet NSTextField *fontPreviewField;
 @property (weak) IBOutlet NSPopUpButton *themeSelect;
 @property (weak) IBOutlet NSSegmentedControl *themeFunctions;
@@ -83,7 +83,7 @@ NSString * const MPDidRequestEditorSetupNotificationKeyName =
 }
 
 
-#pragma mark - NSFontManager Delegate
+#pragma mark - NSFontChanging
 
 - (void)changeFont:(NSFontManager *)sender
 {
