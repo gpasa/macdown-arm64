@@ -113,3 +113,6 @@
 
 /* Preference checkbox */
 "Sticky headings and table headers" = "Titoli e intestazioni di tabella fissi";
+
+/* Preference checkbox */
+"Quick Look preview in Finder" = "Anteprima Quick Look nel Finder";

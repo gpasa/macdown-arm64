@@ -143,3 +143,6 @@
 
 /* Preference checkbox */
 "Sticky headings and table headers" = "Titres et en-têtes de tableau collants";
+
+/* Preference checkbox */
+"Quick Look preview in Finder" = "Aperçu Quick Look dans le Finder";

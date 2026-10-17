@@ -12,6 +12,33 @@
 #import <WebKit/WebKit.h>
 
 
+static NSString * const kMPQuickLookBundleID = @"com.uranusjr.macdown.QuickLook";
+
+static NSString *MPRunTool(NSString *path, NSArray<NSString *> *arguments)
+{
+    NSTask *task = [[NSTask alloc] init];
+    task.executableURL = [NSURL fileURLWithPath:path];
+    task.arguments = arguments;
+    NSPipe *pipe = [NSPipe pipe];
+    task.standardOutput = pipe;
+    task.standardError = [NSFileHandle fileHandleWithNullDevice];
+    if (![task launchAndReturnError:NULL])
+        return @"";
+    NSData *data = [pipe.fileHandleForReading readDataToEndOfFile];
+    [task waitUntilExit];
+    return [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] ?: @"";
+}
+
+// pluginkit marque « - » une extension désactivée, « + » ou rien sinon.
+static BOOL MPQuickLookEnabled(void)
+{
+    NSString *out = MPRunTool(@"/usr/bin/pluginkit",
+                              @[@"-m", @"-i", kMPQuickLookBundleID]);
+    NSString *line = [out stringByTrimmingCharactersInSet:
+        [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    return line.length && ![line hasPrefix:@"-"];
+}
+
 NS_INLINE NSString *MPPrismDefaultThemeName(void)
 {
     return NSLocalizedString(@"(Default)", @"Prism theme title");
@@ -25,6 +52,7 @@ NS_INLINE NSString *MPPrismDefaultThemeName(void)
 @property (weak) IBOutlet NSButton *scaleCheckbox;
 @property (weak) IBOutlet NSTextField *defaultPathLabel;
 @property (strong) NSButton *stickyCheckbox;
+@property (strong) NSButton *quickLookCheckbox;
 @property (strong) WKWebView *stylePreview;
 @end
 
@@ -60,12 +88,13 @@ NS_INLINE NSString *MPPrismDefaultThemeName(void)
     [super viewDidLoad];
     NSSize size = self.view.frame.size;
     [self addStickyCheckbox];
+    [self addQuickLookCheckbox];
     [self addStylePreview];
-    // Une case de plus à gauche, l'aperçu (440 + marge) à droite ; la
+    // Deux cases de plus à gauche, l'aperçu (440 + marge) à droite ; la
     // hauteur suit la colonne de gauche (libellés traduits sur deux lignes).
     NSSize fitting = self.view.fittingSize;
     [self.view setFrameSize:NSMakeSize(size.width + 460,
-                                       MAX(fitting.height, size.height + 24))];
+                                       MAX(fitting.height, size.height + 48))];
     self.stylesheetSelect.menu.delegate = self;
 }
 
@@ -74,6 +103,8 @@ NS_INLINE NSString *MPPrismDefaultThemeName(void)
     [self loadStylesheets];
     [self loadHighlightingThemes];
     self.stickyCheckbox.state = self.preferences.htmlStickyHeaders ?
+        NSControlStateValueOn : NSControlStateValueOff;
+    self.quickLookCheckbox.state = MPQuickLookEnabled() ?
         NSControlStateValueOn : NSControlStateValueOff;
     [self showPreviewForStyleName:self.preferences.htmlStyleName];
 }
@@ -107,6 +138,16 @@ NS_INLINE NSString *MPPrismDefaultThemeName(void)
     else
         self.preferences.htmlStyleName = title;
     [self showPreviewForStyleName:self.preferences.htmlStyleName];
+}
+
+- (IBAction)changeQuickLook:(NSButton *)sender
+{
+    BOOL on = (sender.state == NSControlStateValueOn);
+    MPRunTool(@"/usr/bin/pluginkit",
+              @[@"-e", on ? @"use" : @"ignore", @"-i", kMPQuickLookBundleID]);
+    MPRunTool(@"/usr/bin/qlmanage", @[@"-r"]);
+    sender.state = MPQuickLookEnabled() ?
+        NSControlStateValueOn : NSControlStateValueOff;
 }
 
 - (IBAction)changeStickyHeaders:(NSButton *)sender
@@ -165,6 +206,31 @@ NS_INLINE NSString *MPPrismDefaultThemeName(void)
 
     // S'insère entre « Scale preview… » et la ligne du dossier par défaut.
     NSView *above = self.scaleCheckbox;
+    NSView *below = self.defaultPathLabel;
+    for (NSLayoutConstraint *c in self.view.constraints)
+    {
+        if (c.firstItem == below && c.firstAttribute == NSLayoutAttributeTop
+                && c.secondItem == above)
+            c.active = NO;
+    }
+    [NSLayoutConstraint activateConstraints:@[
+        [box.topAnchor constraintEqualToAnchor:above.bottomAnchor constant:6],
+        [box.leadingAnchor constraintEqualToAnchor:above.leadingAnchor],
+        [below.topAnchor constraintEqualToAnchor:box.bottomAnchor constant:18],
+    ]];
+}
+
+- (void)addQuickLookCheckbox
+{
+    NSString *title = NSLocalizedString(@"Quick Look preview in Finder",
+                                        @"Preference checkbox");
+    NSButton *box = [NSButton checkboxWithTitle:title target:self
+                                         action:@selector(changeQuickLook:)];
+    box.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.view addSubview:box];
+    self.quickLookCheckbox = box;
+
+    NSView *above = self.stickyCheckbox;
     NSView *below = self.defaultPathLabel;
     for (NSLayoutConstraint *c in self.view.constraints)
     {
