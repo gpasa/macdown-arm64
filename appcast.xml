@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">
+  <channel>
+    <title>MacDown for Apple silicon</title>
+    <link>https://github.com/gpasa/macdown-arm64</link>
+    <description>Updates for MacDown (arm64 fork).</description>
+    <language>en</language>
+    <item>
+      <title>Version 0.2</title>
+      <pubDate>Sun, 18 Oct 2026 12:00:00 +0200</pubDate>
+      <sparkle:version>2</sparkle:version>
+      <sparkle:shortVersionString>0.2</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>26.0</sparkle:minimumSystemVersion>
+      <sparkle:releaseNotesLink>https://github.com/gpasa/macdown-arm64/releases/tag/v0.2</sparkle:releaseNotesLink>
+      <enclosure url="https://github.com/gpasa/macdown-arm64/releases/download/v0.2/MacDown-0.2.zip"
+                 sparkle:edSignature="c5wqBKsthxx/UHlSSU/U5mKyrERb3raAgVmrbugvESkP+vYobmmJiUNd3l0aQO6M3Iv17AO2HvtfsF30E9t/Bg=="
+                 length="7499576"
+                 type="application/octet-stream"/>
+    </item>
+  </channel>
+</rss>

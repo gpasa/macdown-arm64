@@ -4,18 +4,6 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
-	<key>CFBundleURLTypes</key>
-	<array>
-		<dict>
-			<key>CFBundleURLName</key>
-			<string>Macdown custom control</string>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>x-macdown</string>
-			</array>
-		</dict>
-	</array>
-
 	<key>CFBundleDocumentTypes</key>
 	<array>
 		<dict>
@@ -89,11 +77,22 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.1</string>
+	<string>0.2</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>Macdown custom control</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>x-macdown</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>2</string>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.productivity</string>
 	<key>LSMinimumSystemVersion</key>
@@ -130,12 +129,10 @@
 	<string>NSApplication</string>
 	<key>OSAScriptingDefinition</key>
 	<string>MacDown.sdef</string>
-	<key>SUBetaFeedURL</key>
-	<string>https://macdown.uranusjr.com/sparkle/macdown/testing/appcast.xml</string>
 	<key>SUFeedURL</key>
-	<string>https://macdown.uranusjr.com/sparkle/macdown/stable/appcast.xml</string>
+	<string>https://raw.githubusercontent.com/gpasa/macdown-arm64/master/appcast.xml</string>
 	<key>SUPublicEDKey</key>
-	<string></string>
+	<string>zH2NV33+4PHvweYkC6N5Z3SrN6xCz/rBMAzc2rwrXb4=</string>
 	<key>UTExportedTypeDeclarations</key>
 	<array>
 		<dict>

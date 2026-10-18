@@ -1,19 +1,23 @@
+# MacDown for Apple silicon
 
-# MacDown
-This is a port of Macdown for Mac Silicon (arm64). The upstream repo is for x86 which Apple plans to sunset by 2026 or so.
+A port of [MacDown](https://github.com/MacDownApp/macdown) for Apple silicon (arm64), maintained by Guglielmo Pasa. It builds on the arm64 port by [wltb](https://github.com/wltb/macdown-arm64); the upstream project targets x86, which Apple is phasing out.
 
-MacDown is an open source Markdown editor for OS X, released under the MIT License. The author was inspired by [Chen Luo](https://twitter.com/chenluois)’s [Mou](http://mouapp.com).
+MacDown is an open source Markdown editor for macOS, released under the MIT License. The author was inspired by [Chen Luo](https://twitter.com/chenluois)’s [Mou](http://mouapp.com).
 
-For Mac Silicon (arm64), the [latest releases are here](https://github.com/tikkal/macdown-arm64/releases). 
+## What this fork adds
 
-For x86 builds, visit the [project site](http://macdown.uranusjr.com/) for more information.
-
+* **Preview on WKWebView**, with stylesheets embedded in the page so every style applies.
+* **New document styles**: GitHub Moderne (readable tables, wide tables scroll horizontally), Lecture (sepia, serif), Nuit (dark) and Académique (serif, booktabs tables).
+* **Sticky headings**: chapter and section titles and table headers stay at the top while scrolling (Preferences › Rendering).
+* **Live style preview** in Preferences › Rendering, updated as you hover the style menu or pick a code theme; all preference panes share one size.
+* **Quick Look**: press space on a `.md` file in Finder for a preview rendered with your MacDown style.
+* Signed with a Developer ID, notarized, and updated through Sparkle from this repository.
 
 ## Install
 
-[Download](http://macdown.uranusjr.com/download/latest/), unzip, and drag the app to Applications folder. MacDown is also available through [Homebrew Cask](https://caskroom.github.io/):
+[Download the latest release](https://github.com/gpasa/macdown-arm64/releases/latest), unzip, and drag MacDown to the Applications folder. Requires macOS 26 on Apple silicon. Later versions install from within the app (MacDown › Check for Updates).
 
-    brew install --cask macdown
+For x86 builds, visit the [original project site](http://macdown.uranusjr.com/).
 
 ## Screenshot
 
